@@ -47,7 +47,6 @@ def reducir_tonos_grises_imagen(imagen, niveles):
     plt.close
 
 
-reducir_tonos_grises_imagen(imagen_gris, 2)
 reducir_tonos_grises_imagen(imagen_gris, 4)
 reducir_tonos_grises_imagen(imagen_gris, 8)
 reducir_tonos_grises_imagen(imagen_gris, 16)
