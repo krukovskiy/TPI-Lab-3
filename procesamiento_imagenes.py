@@ -10,6 +10,7 @@ imagen_original = cv2.imread("Imagenes/hydrangea.jpg")
 # Si la imagen está en RGB originalmente, la convertimos a BGR para OpenCV
 imagen_bgr = cv2.cvtColor(imagen_original, cv2.COLOR_RGB2BGR)
 
+# armar el gráfico
 plt.imshow(imagen_bgr)
 plt.axis("off")
 plt.title("Imagen en BGR")
