@@ -5,15 +5,6 @@ import matplotlib.pyplot as plt
 from tkinter import Tk, filedialog
 import os
 
-# Se necesitan 6 pasos para lograr el efecto deseado, por lo que se crearán seis funciones distintas para:
-# Cargar la imagen.
-# Crear patrones visuales que cambien la imagen a escala de grises.
-# Crear la imagen con los screentones para aumentar el contraste entre los colores.
-# Mostrar el resultado.
-# Guardar el resultado.
-# Ejecutar el código (main)
-
-
 # Función para cargar imagen usando diálogo de selección de archivos
 def cargar_imagen():
     Tk().withdraw()  # Oculta la ventana principal de Tkinter
@@ -25,43 +16,72 @@ def cargar_imagen():
     return imagen_rgb, filename
 
 # Función para crear patrones visuales en escala de grises
-def crear_patron(tipo, tamaño=6):
-    img = Image.new('L', (tamaño, tamaño), 255)  #Crea una imagen en escala de grises rellena de blano (255)
-    draw = ImageDraw.Draw(img) # Habilita que se dibujen los patrones en la imagen.
+def crear_patron(tipo, tamano=12):
+    img = Image.new('L', (tamano, tamano), 255)
+    draw = ImageDraw.Draw(img)
+
     if tipo == 'rayas_horizontales':
-        for i in range(0, tamaño, 2):
-            draw.line((0, i, tamaño, i), fill=0, width=1)  # Patrón de líneas horizontales
+        for i in range(0, tamano, 2):
+            draw.line((0, i, tamano, i), fill=0, width=1)
+    elif tipo == 'rayas_verticales':
+        for i in range(0, tamano, 2):
+            draw.line((i, 0, i, tamano), fill=0, width=1)
+    elif tipo == 'rayas_diagonales':
+        for i in range(-tamano, tamano, 2):
+            draw.line((i, tamano, i + tamano, 0), fill=0, width=1)
     elif tipo == 'puntos_grandes':
-        for x in range(1, tamaño, 6):
-            for y in range(1, tamaño, 6):
-                draw.ellipse((x, y, x+3, y+3), fill=0)  #Patrón de puntos circulares. Dibuja puntos negros.
+        for x in range(1, tamano, 6):
+            for y in range(1, tamano, 6):
+                draw.ellipse((x, y, x+3, y+3), fill=0)
+    elif tipo == 'puntos_pequeños':
+        for x in range(1, tamano, 3):
+            for y in range(1, tamano, 3):
+                draw.ellipse((x, y, x+1, y+1), fill=0)
     elif tipo == 'diagonales_dobles':
-        for i in range(-tamaño, tamaño, 2):
-            draw.line((i, tamaño, i+tamaño, 0), fill=0, width=1)  #Patrón de Diagonal /
-            draw.line((i, 0, i+tamaño, tamaño), fill=0, width=1)  #Patrón de Diagonal \
+        for i in range(-tamano, tamano, 2):
+            draw.line((i, tamano, i+tamano, 0), fill=0, width=1)
+            draw.line((i, 0, i+tamano, tamano), fill=0, width=1)
     elif tipo == 'cuadricula':
-        for x in range(0, tamaño, 2):
-            for y in range(0, tamaño, 2):
-                draw.rectangle((x, y, x+2, y+2), outline=0, width=1)  #Patrón de cuadros
-    return np.array(img)  #Devuelve como array NumPy para su uso posterior.
+        for x in range(0, tamano, 2):
+            for y in range(0, tamano, 2):
+                draw.rectangle((x, y, x+2, y+2), outline=0, width=1)
+    elif tipo == 'zigzag':
+        for i in range(0, tamano, 2):
+            draw.line((i, 0, i+1, tamano), fill=0, width=1)
+            draw.line((i+1, 0, i, tamano), fill=0, width=1)
+    elif tipo == 'ondas':
+        for i in range(0, tamano, 2):
+            draw.line((i, int(tamano/2), i+2, int(tamano/2)-2), fill=0, width=1)
+            draw.line((i+2, int(tamano/2)-2, i+4, int(tamano/2)), fill=0, width=1)
+
+    return np.array(img)
 
 # Función que aplica los screentones a cada color. Aplica un patrón distinto a cada color. 4 patrones para 4 colores.
 def aplicar_screentones(imagen_hsv, imagen_rgb):
-    #Rangos HSV para distintos colores. Define los rangos HSV (hue, saturation, value) que indican qué píxeles son de cada color relevante.
     rangos_colores = {
-        'rojo':  [(0, 70, 50), (10, 255, 255)],
-        'verde': [(36, 25, 25), (86, 255,255)],
-        'azul':  [(94, 80, 2), (126, 255, 255)],
-        'amarillo': [(15, 100, 100), (35, 255, 255)]
-    }
-
+                        'rojo1':     [(0, 100, 100), (5, 255, 255)],
+                        'rojo2':     [(175, 100, 100), (180, 255, 255)],
+                        'naranja':   [(6, 120, 120), (20, 255, 255)],
+                        'amarillo':  [(21, 100, 100), (30, 255, 255)],
+                        'verde':     [(36, 80, 80), (85, 255, 255)],
+                        'cian':      [(86, 80, 80), (95, 255, 255)],
+                        'azul':      [(96, 80, 80), (130, 255, 255)],
+                        'purpura':   [(131, 80, 80), (160, 255, 255)],
+                        'rosa':      [(161, 80, 80), (169, 255, 255)],
+                    }
+    
     #Patrones visuales asignados a cada color
     patrones = {
-        'verde': crear_patron('rayas_horizontales'),
-        'azul': crear_patron('puntos_grandes'),
-        'rojo': crear_patron('diagonales_dobles'),
-        'amarillo': crear_patron('cuadricula')
-    }
+                    'rojo1': crear_patron('rayas_horizontales'),
+                    'rojo2': crear_patron('rayas_verticales'),
+                    'naranja': crear_patron('cuadricula'),
+                    'amarillo': crear_patron('puntos_pequeños'),
+                    'verde': crear_patron('puntos_grandes'),
+                    'cian': crear_patron('diagonales_dobles'),
+                    'azul': crear_patron('rayas_diagonales'),
+                    'purpura': crear_patron('zigzag'),
+                    'rosa': crear_patron('ondas')
+                }
 
     #Imagen en blanco donde se aplicarán los patrones
     imagen_resultado = np.ones(imagen_rgb.shape[:2], dtype=np.uint8) * 255
@@ -70,6 +90,10 @@ def aplicar_screentones(imagen_hsv, imagen_rgb):
         #Crear máscara para detectar zonas del color actual
         mascara = cv2.inRange(imagen_hsv, np.array(bajo), np.array(alto))
 
+        # Smooth and sharpen mask
+        mascara = cv2.GaussianBlur(mascara, (5, 5), 0)
+        _, mascara = cv2.threshold(mascara, 50, 255, cv2.THRESH_BINARY)
+        
         #Suavizar bordes de la máscara
         kernel = np.ones((3, 3), np.uint8)
         mascara = cv2.dilate(mascara, kernel, iterations=1)
