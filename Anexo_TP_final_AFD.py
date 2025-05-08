@@ -1,57 +1,96 @@
 import tkinter as tk
 from tkinter import filedialog
-from PIL import Image, ImageTk
+from PIL import Image, ImageDraw, ImageTk, ImageFont
 import cv2
 import webcolors
+from typing import Tuple, Optional, List
 
-def cargar_imagen(root):
-    root.withdraw()
-    filename = filedialog.askopenfilename(title="Seleccionar imagen")
-    root.deiconify()
-    if not filename:
-        raise FileNotFoundError("No se seleccionó ninguna imagen.")
-    imagen_bgr = cv2.imread(filename)
-    imagen_rgb = cv2.cvtColor(imagen_bgr, cv2.COLOR_BGR2RGB)
-    return imagen_rgb, filename
 
-def get_color(event):
-    x, y = event.x, event.y
-    if 0 <= x < img.width and 0 <= y < img.height:
-        color = img.getpixel((x, y))
+class ColorInspectorApp:
+    def __init__(self, root: tk.Tk):
+        self.root = root
+        self.root.title("Color Under Cursor")
 
+        self.image: Optional[Image.Image] = None
+        self.tk_image: Optional[ImageTk.PhotoImage] = None
+        self.marked_points: List[Tuple[int, int, str]] = []
+
+        self._load_image()
+        self._setup_widgets()
+
+        # Precompute RGB tuples for faster closest name lookup
+        self.css3_rgb = {
+                            name: webcolors.name_to_rgb(name)
+                            for name in webcolors.names()
+                        }
+
+    def _load_image(self):
+        self.root.withdraw()
+        filename = filedialog.askopenfilename(title="Select Image")
+        self.root.deiconify()
+
+        if not filename:
+            raise FileNotFoundError("No image selected.")
+
+        image_bgr = cv2.imread(filename)
+        image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+        self.image = Image.fromarray(image_rgb)
+
+    def _setup_widgets(self):
+        self.tk_image = ImageTk.PhotoImage(self.image)
+        self.label = tk.Label(self.root, image=self.tk_image)
+        self.label.pack()
+
+        self.color_label = tk.Label(
+            self.root, text="Move the cursor or click to mark a color"
+        )
+        self.color_label.pack()
+
+        self.label.bind("<Motion>", self._on_mouse_move)
+
+    def _get_color_name(self, rgb: Tuple[int, int, int]) -> str:
         try:
-            closest_name = actual_name = webcolors.rgb_to_name(color)
+            return webcolors.rgb_to_name(rgb)
         except ValueError:
-            distances = {}
-            for name in webcolors.names():
-                r_c, g_c, b_c = webcolors.name_to_rgb(name)
-                rd = (r_c - color[0]) ** 2
-                gd = (g_c - color[1]) ** 2
-                bd = (b_c - color[2]) ** 2
-                distances[name] = rd + gd + bd
-            closest_name = min(distances, key=distances.get)
-            actual_name = None
+            # Find closest color
+            r1, g1, b1 = rgb
+            closest_name = min(
+                                self.css3_rgb,
+                                key=lambda name: (r1 - self.css3_rgb[name][0]) ** 2 +
+                                                (g1 - self.css3_rgb[name][1]) ** 2 +
+                                                (b1 - self.css3_rgb[name][2]) ** 2
+                                )
+            return f"Closest: {closest_name.capitalize()}"
 
-        if actual_name:
-            name_text = f"{actual_name}"
-        else:
-            name_text = f"Closest: {closest_name}"
+    def _on_mouse_move(self, event: tk.Event):
+        if self.image is None:
+            return
 
-        color_label.config(text=f"RGB({x}, {y}) = {color} → {name_text}")
+        x, y = event.x, event.y
+        if not (0 <= x < self.image.width and 0 <= y < self.image.height):
+            return
 
-root = tk.Tk()
-root.title("Color bajo el cursor")
+        rgb = self.image.getpixel((x, y))
+        name_text = self._get_color_name(rgb)
 
-cv_img, path = cargar_imagen(root)
-img = Image.fromarray(cv_img)
-tk_image = ImageTk.PhotoImage(img)
+        image_copy = self.image.copy()
+        draw = ImageDraw.Draw(image_copy)
 
-label = tk.Label(root, image=tk_image)
-label.pack()
+        self._draw_overlay(draw, x, y, name_text)
 
-color_label = tk.Label(root, text="Mueve el cursor sobre la imagen para ver el color")
-color_label.pack()
+        self.tk_image = ImageTk.PhotoImage(image_copy)
+        self.label.config(image=self.tk_image)
+        self.color_label.config(text=f"RGB({x}, {y}) = {rgb} → {name_text}")
 
-label.bind("<Motion>", get_color)
+    def _draw_overlay(self, draw, x, y, text):
 
-root.mainloop()
+        font = ImageFont.load_default(size=40)
+        text_color = "black"
+
+        draw.ellipse((x - 5, y - 5, x + 5, y + 5), outline=text_color, width=2)
+        draw.text((x + 10, y - 10), text, fill=text_color, font=font)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ColorInspectorApp(root)
+    root.mainloop() 
