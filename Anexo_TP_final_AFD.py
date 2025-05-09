@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 import webcolors
 import numpy as np
-from PIL import Image, ImageDraw, ImageTk, ImageFont
+from PIL import Image, ImageDraw, ImageTk
 from typing import Tuple, Optional, List
 from image_loader import ImageLoader
 
@@ -10,6 +10,7 @@ class ColorInspectorApp:
     def __init__(self, root: tk.Tk):
         self.root = root
         self.root.title("Color Under Cursor")
+        self.root.protocol("WM_DELETE_WINDOW", self._on_close)
 
         self.image: Optional[Image.Image] = None
         self.tk_image: Optional[ImageTk.PhotoImage] = None
@@ -17,8 +18,8 @@ class ColorInspectorApp:
         
         image_rgb, *_ = ImageLoader.load()
         self.image = Image.fromarray(image_rgb)
-        self.image_np = np.array(self.image)  # Shape: (H, W, 3)
-        self.font = tkFont.Font(family="Helvetica", size=10)
+        self.image_np = np.array(self.image)
+        self.font = tkFont.Font(family="Helvetica", size=20)
         self.last_pixel: Optional[Tuple[int, int]] = None
 
         self.css3_rgb = {
@@ -42,17 +43,17 @@ class ColorInspectorApp:
 
     def _get_color_name(self, rgb: Tuple[int, int, int]) -> str:
         try:
-            return webcolors.rgb_to_name(rgb)
+            return webcolors.rgb_to_name(rgb).capitalize()
         except ValueError:
             r1, g1, b1 = rgb
             closest_name = min(
-                self.css3_rgb,
-                key=lambda name: (
-                    (r1 - self.css3_rgb[name][0]) ** 2 +
-                    (g1 - self.css3_rgb[name][1]) ** 2 +
-                    (b1 - self.css3_rgb[name][2]) ** 2
-                )
-            )
+                                self.css3_rgb,
+                                key=lambda name: (
+                                                    (r1 - self.css3_rgb[name][0]) ** 2 +
+                                                    (g1 - self.css3_rgb[name][1]) ** 2 +
+                                                    (b1 - self.css3_rgb[name][2]) ** 2
+                                                )
+                                )
             return f"Closest: {closest_name.capitalize()}"
 
     def _on_mouse_move(self, event: tk.Event):
@@ -84,7 +85,12 @@ class ColorInspectorApp:
         draw.ellipse((x - 5, y - 5, x + 5, y + 5), outline=text_color, width=2)
         draw.text((x + 10, y - 10), text, fill=text_color, font=self.font)
 
+    def _on_close(self):
+        self.root.quit()
+        self.root.destroy()
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = ColorInspectorApp(root)
     root.mainloop()
+
