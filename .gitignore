@@ -1,3 +1,174 @@
-.ipynb_checkpoints/
+###########################
+# 1. ENVIRONMENTS & VENV  #
+###########################
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+venv/
+**.venv/
+**.env/
+.pdm-python
+
+#############################
+# 2. BYTECODE & CACHE FILES #
+#############################
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+.pyre/
+.ruff_cache/
+cython_debug/
+
+#####################################
+# 3. DISTRIBUTION / BUILD ARTIFACTS #
+#####################################
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+*.egg
+MANIFEST
+.installed.cfg
+
+##########################
+# 4. COMPILED EXTENSIONS #
+##########################
+*.so
+*.sage.py
+
+#########################
+# 5. INSTALLER LOG FILES #
+#########################
+pip-log.txt
+pip-delete-this-directory.txt
+
+##########################
+# 6. TESTING & COVERAGE  #
+##########################
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.tox/
+.nox/
+.hypothesis/
+htmlcov/
+cover/
+
+##########################
+# 7. EDITOR/IDE SETTINGS #
+##########################
+.vscode/
+.vscode/
+**.vscode/
+.spyderproject
+.spyproject
+.ropeproject
+.idea/
+
+################################
+# 8. PROJECT-SPECIFIC FILES    #
+################################
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask
+instance/
+.webassets-cache
+
+# Scrapy
+.scrapy
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# IPython / Jupyter
+.ipynb_checkpoints
+profile_default/
+ipython_config.py
+
+# Sphinx / MkDocs
+docs/_build/
+site/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Translations
+*.mo
+*.pot
+
+# Cython debug
+cython_debug/
+
+###########################
+# 9. PACKAGE MANAGERS     #
+###########################
+
+# pyenv
+# .python-version  # (uncomment if ignoring this)
+
+# pipenv
+# Pipfile.lock
+
+# poetry
+# poetry.lock
+
+# pdm
+# pdm.lock
+.pdm.toml
+.pdm-build/
+
+# PEP 582
+__pypackages__/
+
+##########################
+# 10. PYINSTALLER FILES  #
+##########################
+*.manifest
+*.spec
+
+##########################
+# 11. PYPI CONFIGURATION #
+##########################
+.pypirc
+
+##########################
+# 12. IMAGES & MEDIA     #
+##########################
+/images
+/imagenes
+./images
+./imagenes/
+/Imagenes
+./Imagenes/
