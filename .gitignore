@@ -167,8 +167,8 @@ __pypackages__/
 # 12. IMAGES & MEDIA     #
 ##########################
 /images
-/imagenes
 ./images
+/imagenes
 ./imagenes/
 /Imagenes
 ./Imagenes/
