@@ -3,8 +3,9 @@ Lanza la ventana del inspector de color.
 """
 
 import tkinter as tk
-from legacy.cursor_with_color_name import ColorInspectorApp
+from color_inspector import run_color_inspector
 
 def run_color_inspector():
-    inspector_window = tk.Toplevel()
-    app = ColorInspectorApp(inspector_window)
+    window = tk.Toplevel()
+    app = run_color_inspector(window)
+    return app

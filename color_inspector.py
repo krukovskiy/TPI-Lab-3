@@ -24,7 +24,7 @@ def run_color_inspector():
     image_np = np.array(rgb_image)
     display_bgr = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
     original_bgr = display_bgr.copy()
-    
+
     color_name_map = build_color_name_map(image_np)
 
     def on_mouse(event, x, y, flags, param):
@@ -41,7 +41,8 @@ def run_color_inspector():
     cv2.setMouseCallback("Color Inspector", on_mouse)
 
     while True:
-        cv2.imshow("Color Inspector", display_bgr)
-        if cv2.waitKey(1) & 0xFF == 27:
+        if cv2.getWindowProperty("Color Inspector", cv2.WND_PROP_VISIBLE) < 1:
             break
+        cv2.imshow("Color Inspector", display_bgr)
+        cv2.waitKey(1) 
     cv2.destroyAllWindows()
