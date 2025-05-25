@@ -34,8 +34,29 @@ def run_color_inspector():
             name = color_name_map[y, x]
             display_bgr = original_bgr.copy()
             cv2.circle(display_bgr, (x, y), 5, (0, 0, 0), 2)
-            cv2.putText(display_bgr, f"{name}", (x + 10, y - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
+
+            # Calcular el tamaño del texto para el rectángulo
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            font_scale = 0.5
+            font_thickness = 2
+            text_size = cv2.getTextSize(name, font, font_scale, font_thickness)[0]
+            text_width, text_height = text_size
+
+            # Definir las coordenadas del rectángulo (caja blanca)
+            box_x = x + 10
+            box_y = y - 10 - text_height
+            box_width = text_width + 10  # Añadir padding
+            box_height = text_height + 10  # Añadir padding
+            box_top_left = (box_x, box_y)
+            box_bottom_right = (box_x + box_width, box_y + box_height)
+
+            # Dibujar rectángulo blanco
+            cv2.rectangle(display_bgr, box_top_left, box_bottom_right, (255, 255, 255), -1)  # Fondo blanco
+            cv2.rectangle(display_bgr, box_top_left, box_bottom_right, (0, 0, 0), 1)  # Borde negro opcional
+
+            # Dibujar el texto sobre el rectángulo
+            cv2.putText(display_bgr, f"{name}", (box_x + 5, box_y + text_height + 5),
+                    font, font_scale, (0, 0, 0), font_thickness)
 
     cv2.namedWindow("Color Inspector")
     cv2.setMouseCallback("Color Inspector", on_mouse)
