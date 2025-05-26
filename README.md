@@ -27,6 +27,7 @@ Esta herramienta está diseñada pensando en la accesibilidad, útil para tareas
 ```
 screentone_app/
 ├── __init__.py
+├── api.py                   # Define rutas y lógica API
 ├── main.py                  # Lanzador del menú principal
 ├── image_loader.py          # Carga de imágenes
 ├── color_ranges.py          # Rangos HSV por color
