@@ -5,6 +5,7 @@ Devuelve la imagen seleccionada en formato RGB junto con la ruta del archivo.
 
 import cv2
 from tkinter import Tk, filedialog
+from PIL import Image
 
 def load_image():
     """Ventana de diálogo para seleccionar un archivo e importa la imagen como RGB."""
@@ -18,3 +19,7 @@ def load_image():
 
     image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
     return image_rgb, filename
+
+def load_image_from_path(path):
+    """Carga una imagen desde una ruta y la devuelve como PIL.Image."""
+    return Image.open(path)
