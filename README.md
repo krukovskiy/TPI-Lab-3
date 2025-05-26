@@ -52,7 +52,11 @@ pip install -r requirements.txt
 2. **Iniciar la aplicación**:
 
 ```bash
+"GUI"
 python screentone_app/main.py
+
+"FastAPI"
+uvicorn api:app --reload
 ```
 
 ---

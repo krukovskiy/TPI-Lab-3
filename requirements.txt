@@ -4,3 +4,5 @@ numpy==2.2.5
 opencv-python==4.11.0.86
 pillow==11.2.1
 webcolors==24.11.1
+uvicorn==0.34.2
+python-multipart==0.0.20
