@@ -1,11 +1,18 @@
 """
 Lanza la ventana del inspector de color.
 """
-
-import tkinter as tk
-from color_inspector import run_color_inspector
+import sys
+from tkinter import filedialog
+from PIL import Image
+from color_inspector import inspect_colors
 
 def run_color_inspector():
-    window = tk.Toplevel()
-    app = run_color_inspector(window)
-    return app
+    file_path = filedialog.askopenfilename(
+                filetypes=[("Image Files", "*.png *.jpg *.jpeg *.bmp")]
+            )
+    if not file_path:
+        return
+
+    image = Image.open(file_path)
+    inspect_colors(image)  # Pasa la imagen a la función
+    sys.exit()

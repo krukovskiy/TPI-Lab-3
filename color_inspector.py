@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import webcolors
-from image_loader import load_image
+from PIL import Image
 
 def build_color_name_map(image_np):
     height, width = image_np.shape[:2]
