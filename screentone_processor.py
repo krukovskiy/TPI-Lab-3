@@ -17,9 +17,9 @@ class ScreentoneProcessor:
         pattern_size = max(30, min(width, height) // 10)
         self.pattern_map = {
                             'red1': create_pattern('horizontal_stripes', pattern_size),
-                            'red2': create_pattern('vertical_stripes', pattern_size),
+                            'red2': create_pattern('horizontal_stripes', pattern_size),
                             'orange': create_pattern('grid', pattern_size),
-                            'yellow': create_pattern('small_dots', pattern_size),
+                            'yellow': create_pattern('vertical_stripes', pattern_size),
                             'green': create_pattern('large_dots', pattern_size),
                             'cyan': create_pattern('double_diagonals', pattern_size),
                             'blue': create_pattern('diagonal_stripes', pattern_size),
