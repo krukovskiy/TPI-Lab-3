@@ -32,8 +32,17 @@ def inspect_colors(image: Image.Image):
                 name = color_name_map[y, x]
                 display = original_bgr.copy()
                 cv2.circle(display, (x, y), 5, (0, 0, 0), 2)
-                cv2.putText(display, f"{name}", (x + 10, y - 10),
+                
+                text_position = (x + 10, y - 10)
+                
+                # Sombra blanca (texto más grueso)
+                cv2.putText(display, f"{name}", text_position,
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 4, cv2.LINE_AA)
+                
+                # Texto negro (texto más fino)
+                cv2.putText(display, f"{name}", text_position,
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2, cv2.LINE_AA)
+
                 cv2.imshow("Color Inspector", display)
 
     cv2.namedWindow("Color Inspector")
