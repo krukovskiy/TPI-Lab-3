@@ -1,130 +1,142 @@
-# screentone-converter
+# 🖼️ Screentone Processor – Web API + GUI
 
-# Aplicación de Screentone
-
-Una aplicación con interfaz gráfica para procesamiento de imágenes que permite a los usuarios:
-
-* **Aplicar texturas de screentone** a regiones de imagen según rangos de color HSV detectados.
-* **Inspeccionar valores de color a nivel de píxel** mediante un visor interactivo.
-
-Esta herramienta está diseñada pensando en la accesibilidad, útil para tareas como estilización de imágenes, renderizado artístico o visualización adaptativa.
+Una aplicación de procesamiento de imágenes que permite aplicar **texturas tipo screentone** sobre regiones segmentadas por color, con dos modos de uso: una interfaz web basada en FastAPI y una GUI local opcional con Tkinter.
 
 ---
 
-## 🖼 Características
+## 🚀 Aplicación Web (FastAPI)
 
-* **Segmentación de color** basada en HSV
-* Superposición dinámica de **patrones** (rayas, puntos, grillas)
-* **Escalado ajustable** de patrones según el tamaño de imagen
-* **Combinación alfa** para superposición no destructiva
-* Inspector interactivo de **nombres de color** (nombre CSS3 más cercano)
-* Menús GUI para navegación sencilla
+Permite aplicar screentones e inspeccionar colores a través de una interfaz web disponible en:
+
+```
+http://localhost:8000/static/index.html
+```
+
+> ⚠️ Requiere el uso de una `api_key` (por ejemplo: `123`) para habilitar las funciones.
+
+### ✅ Características principales
+
+- API REST desarrollada con **FastAPI**
+- Detección de regiones por color (espacio HSV)
+- Aplicación dinámica de patrones (rayas, puntos, grillas)
+- Generación de imágenes procesadas
+- Interfaz web estática para pruebas visuales
+
+---
+
+## ▶️ Instrucciones de Uso
+
+### 1. Instalar dependencias
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Iniciar el servidor
+
+```bash
+uvicorn app.main:app --reload
+```
+
+### 3. Acceder a la interfaz
+
+Abrir en navegador:
+
+```
+http://localhost:8000/static/index.html
+```
+
+Subir una imagen, elegir acción, y procesar.
 
 ---
 
 ## 📁 Estructura del Proyecto
 
 ```
-screentone_app/
-├── __init__.py
-├── api.py                   # Define rutas y lógica API
-├── main.py                  # Lanzador del menú principal
-├── image_loader.py          # Carga de imágenes
-├── color_ranges.py          # Rangos HSV por color
-├── patterns.py              # Generadores de texturas de screentone
-├── screentone_processor.py  # Lógica principal del screentone
-├── screentone_gui.py        # Ejecuta la GUI del screentone
-├── color_inspector.py       # Herramienta para inspección de color
-├── color_inspector_gui.py   # Interfaz para lanzar el inspector
-└── requirements.txt         # Dependencias
+TPI-LAB-3/
+├── app/
+│   ├── api/v1/
+│   │   ├── color_inspector_api.py      # Endpoint de inspección de color
+│   │   └── screentone_api.py           # Endpoint de screentone
+│   ├── core/
+│   │   ├── exceptions.py               # Manejo de errores personalizados
+│   │   └── security.py                 # Validación de API key
+│   ├── services/
+│   │   ├── color_inspector.py         # Lógica de inspección de color
+│   │   ├── color_ranges.py            # Rangos HSV para segmentación
+│   │   ├── patterns.py                # Generación de texturas screentone
+│   │   └── screentone.py              # Procesamiento principal
+│   ├── config.py                      # Configuración global
+│   └── main.py                        # Punto de entrada de FastAPI
+│
+├── static/
+│   └── index.html                     # Interfaz web
+├── uploads/                           # Carpeta para imágenes subidas
+├── outputs/                           # Carpeta de resultados generados
+├── gui_tkinter/                       # GUI opcional en Tkinter (ver más abajo)
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-## ▶️ Cómo Ejecutar
+## 🧪 Endpoints Principales
 
-1. **Instalar dependencias**:
+- `POST /api/v1/screentone/apply`  
+  Procesa una imagen cargada y aplica screentone según colores HSV.
+
+- `POST /api/v1/color-inspector/check`  
+  Devuelve el nombre del color más cercano para un píxel seleccionado.
+
+---
+
+## 🖥️ GUI Local Adicional (Tkinter)
+
+Además de la versión web, se incluye una **interfaz de escritorio opcional** para inspección y prueba rápida.
+
+### Funcionalidades:
+
+- Abrir imágenes locales
+- Aplicar screentone
+- Inspeccionar colores
+- Interfaz gráfica sencilla con menús
+
+### Ejecutar GUI:
 
 ```bash
-pip install -r requirements.txt
-```
-
-2. **Iniciar la aplicación**:
-
-```bash
-"GUI"
-python screentone_app/main.py
-
-"FastAPI"
-uvicorn api:app --reload
+python gui_tkinter/screentone_gui.py
 ```
 
 ---
 
-## 💡 Ejemplo de Uso
+## 📦 Dependencias
 
-### 1. Aplicar Screentone
-
-* Abrir una imagen.
-* La app detecta regiones por color (ej. rojo, azul, verde).
-* Cada región se rellena con un patrón de screentone correspondiente.
-* Se guardan la imagen original, la procesada y la combinada.
-
-### 2. Inspeccionar Colores
-
-* Abrir una imagen.
-* Mover el cursor para ver valores RGB y nombre de color más cercano.
-
----
-
-## 🔁 Código de Ejemplo
-
-```python
-from screentone_app.image_loader import load_image
-from screentone_app.screentone_processor import ScreentoneProcessor
-
-img_rgb, path = load_image()
-hsv = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2HSV)
-proc = ScreentoneProcessor(img_rgb.shape)
-gray = proc.apply(hsv, img_rgb)
-final = proc.superimpose(img_rgb, gray)
-proc.save(img_rgb, gray, final, path)
-```
-
----
-
-## 🔄 Diagrama de Flujo
-
-```mermaid
-graph LR
-    A[Iniciar App] --> B{Menú Principal}
-    B --> C[Aplicar Screentone]
-    B --> D[Inspeccionar Colores]
-
-    C --> E[Cargar Imagen]
-    E --> F[Convertir a HSV]
-    F --> G[Segmentar por Color]
-    G --> H[Generar Screentones]
-    H --> I[Superponer en Imagen]
-    I --> J[Mostrar y Guardar Resultado]
-
-    D --> K[Cargar Imagen]
-    K --> L[Mostrar Info del Cursor]
-```
-
----
-
-## Dependencias
+Listado completo (`requirements.txt`):
 
 ```
+fastapi==0.110.2
 matplotlib==3.10.1
 numpy==2.2.5
 opencv-python==4.11.0.86
 pillow==11.2.1
 webcolors==24.11.1
+uvicorn==0.34.2
+python-multipart==0.0.20
+pydantic_settings==2.0.0
 ```
 
 ---
 
-[Trabajo practico - Procesamiento de Imagenes - 1.pdf](https://github.com/user-attachments/files/19876551/Trabajo.practico.-.Procesamiento.de.Imagenes.-.1.pdf)
+## 👨‍💻 Autor
 
+Trabajo Práctico Final – Procesamiento de Imágenes  
+IFTS N 18
+Autores: 
+
+Agustina Ferrer Deheza
+Cristian Gimenez
+Ignat Krukovskiy
+Jazmín Pineda Chipatecua
+Juan Esteban Gordon
+
+---
