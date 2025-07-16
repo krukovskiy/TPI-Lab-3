@@ -4,7 +4,7 @@ Lanza la ventana del inspector de color.
 import sys
 from tkinter import filedialog
 from PIL import Image
-from app.services.color_inspector import build_color_name_map
+from app.services.color_inspector import inspect_colors
 
 def run_color_inspector():
     file_path = filedialog.askopenfilename(
@@ -14,5 +14,5 @@ def run_color_inspector():
         return
 
     image = Image.open(file_path)
-    build_color_name_map(image)  # Pasa la imagen a la función
+    inspect_colors(image)  # Pasa la imagen a la función
     sys.exit()

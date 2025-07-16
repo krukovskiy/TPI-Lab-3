@@ -104,7 +104,7 @@ Además de la versión web, se incluye una **interfaz de escritorio opcional** p
 ### Ejecutar GUI:
 
 ```bash
-python gui_tkinter/screentone_gui.py
+python -m gui_tkinter.main
 ```
 
 ---
