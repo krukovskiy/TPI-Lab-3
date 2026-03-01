@@ -1,0 +1,120 @@
+<Window x:Class="EdfBrowser.App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:EdfBrowser.App.Views.Controls"
+        xmlns:docks="clr-namespace:EdfBrowser.App.Views.Docks"
+        Title="{Binding Title}"
+        Width="{Binding Settings.WindowWidth, Mode=TwoWay}"
+        Height="{Binding Settings.WindowHeight, Mode=TwoWay}"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.InputBindings>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{Binding OpenFileCommand}"/>
+        <KeyBinding Key="W" Modifiers="Ctrl" Command="{Binding CloseFileCommand}"/>
+        <KeyBinding Key="Left" Command="{Binding PageLeftCommand}"/>
+        <KeyBinding Key="Right" Command="{Binding PageRightCommand}"/>
+        <KeyBinding Key="Up" Command="{Binding ZoomInCommand}"/>
+        <KeyBinding Key="Down" Command="{Binding ZoomOutCommand}"/>
+        <KeyBinding Key="Home" Command="{Binding GoToStartCommand}"/>
+        <KeyBinding Key="End" Command="{Binding GoToEndCommand}"/>
+        <KeyBinding Key="Back" Command="{Binding ZoomBackCommand}"/>
+        <KeyBinding Key="F" Modifiers="Ctrl" Command="{Binding FitToScreenCommand}"/>
+    </Window.InputBindings>
+
+    <DockPanel>
+        <!-- Menu Bar -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open..." Command="{Binding OpenFileCommand}" InputGestureText="Ctrl+O"/>
+                <MenuItem Header="_Close" Command="{Binding CloseFileCommand}" InputGestureText="Ctrl+W"/>
+                <MenuItem Header="Close _All" Command="{Binding CloseAllFilesCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Save Session..." Command="{Binding SaveSessionCommand}"/>
+                <MenuItem Header="_Load Session..." Command="{Binding LoadSessionCommand}"/>
+                <Separator/>
+                <MenuItem Header="Save _Montage..." Command="{Binding SaveMontageCommand}"/>
+                <MenuItem Header="Load _Montage..." Command="{Binding LoadMontageCommand}"/>
+                <Separator/>
+                <MenuItem Header="Export to _PNG..." Command="{Binding ExportToPngCommand}"/>
+                <MenuItem Header="Export to P_DF..." Command="{Binding ExportToPdfCommand}"/>
+                <MenuItem Header="_Print..." Command="{Binding PrintCommand}"/>
+                <Separator/>
+                <MenuItem Header="E_xit" Command="{Binding ExitCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="Page _Left" Command="{Binding PageLeftCommand}" InputGestureText="Left"/>
+                <MenuItem Header="Page _Right" Command="{Binding PageRightCommand}" InputGestureText="Right"/>
+                <Separator/>
+                <MenuItem Header="Zoom _In" Command="{Binding ZoomInCommand}" InputGestureText="Up"/>
+                <MenuItem Header="Zoom _Out" Command="{Binding ZoomOutCommand}" InputGestureText="Down"/>
+                <MenuItem Header="Zoom _Back" Command="{Binding ZoomBackCommand}" InputGestureText="Backspace"/>
+                <Separator/>
+                <MenuItem Header="Go to _Start" Command="{Binding GoToStartCommand}" InputGestureText="Home"/>
+                <MenuItem Header="Go to _End" Command="{Binding GoToEndCommand}" InputGestureText="End"/>
+                <MenuItem Header="_Fit to Screen" Command="{Binding FitToScreenCommand}" InputGestureText="Ctrl+F"/>
+            </MenuItem>
+            <MenuItem Header="_Signals">
+                <MenuItem Header="_Add Signals..." Command="{Binding AddSignalsCommand}"/>
+                <MenuItem Header="_Remove All Signals" Command="{Binding RemoveAllSignalsCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="_Options..." Command="{Binding ShowOptionsCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About..." Command="{Binding ShowAboutCommand}"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Toolbar -->
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar Band="0" BandIndex="0">
+                <Button Command="{Binding OpenFileCommand}" ToolTip="Open File" Style="{StaticResource ToolBarButtonStyle}" Content="📂"/>
+                <Separator/>
+                <Button Command="{Binding PageLeftCommand}" ToolTip="Page Left" Style="{StaticResource ToolBarButtonStyle}" Content="◀"/>
+                <Button Command="{Binding PageRightCommand}" ToolTip="Page Right" Style="{StaticResource ToolBarButtonStyle}" Content="▶"/>
+                <Separator/>
+                <Button Command="{Binding ZoomInCommand}" ToolTip="Zoom In" Style="{StaticResource ToolBarButtonStyle}" Content="🔍+"/>
+                <Button Command="{Binding ZoomOutCommand}" ToolTip="Zoom Out" Style="{StaticResource ToolBarButtonStyle}" Content="🔍-"/>
+                <Button Command="{Binding ZoomBackCommand}" ToolTip="Zoom Back" Style="{StaticResource ToolBarButtonStyle}" Content="↩"/>
+                <Separator/>
+                <Button Command="{Binding GoToStartCommand}" ToolTip="Go to Start" Style="{StaticResource ToolBarButtonStyle}" Content="⏮"/>
+                <Button Command="{Binding GoToEndCommand}" ToolTip="Go to End" Style="{StaticResource ToolBarButtonStyle}" Content="⏭"/>
+                <Button Command="{Binding FitToScreenCommand}" ToolTip="Fit to Screen" Style="{StaticResource ToolBarButtonStyle}" Content="⬜"/>
+                <Separator/>
+                <Button Command="{Binding AddSignalsCommand}" ToolTip="Add Signals" Style="{StaticResource ToolBarButtonStyle}" Content="📊"/>
+            </ToolBar>
+        </ToolBarTray>
+
+        <!-- Status Bar -->
+        <StatusBar DockPanel.Dock="Bottom" Style="{StaticResource StatusBarStyle}">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusText}"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock Text="{Binding FileInfoText}"/>
+            </StatusBarItem>
+        </StatusBar>
+
+        <!-- Main Content -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="250" MinWidth="150"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Signal Viewer -->
+            <controls:SignalViewerControl Grid.Column="0"
+                                           DataContext="{Binding}"/>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Center"
+                          VerticalAlignment="Stretch" Background="#C0C0C0"/>
+
+            <!-- Annotation Dock -->
+            <docks:AnnotationDockView Grid.Column="2"
+                                       DataContext="{Binding AnnotationDock}"/>
+        </Grid>
+    </DockPanel>
+</Window>
